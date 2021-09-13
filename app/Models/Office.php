@@ -24,8 +24,8 @@ class Office extends Model
         'lng'=> 'decimal:8',
         'lat'=> 'decimal:8',
         'approval_status'=> 'integer',
-        'price_per_day'=> 'decimal',
-        'monthly_discount'=>  'decimal',
+        'price_per_day'=> 'decimal:2',
+        'monthly_discount'=>  'decimal:2',
         'hidden'=> 'bool',
     ];
 

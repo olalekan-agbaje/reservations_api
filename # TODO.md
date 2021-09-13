@@ -4,10 +4,10 @@
 [x] Prepare models
 [x] Prepare factories
 [x] Prepare resources
-[] Tags
-    [] Routes
-    [] Controller
-    [] Tests
+[x] Tags
+    [x] Routes
+    [x] Controller
+    [x] Tests
 [] Offices
     [] List offices
     [] Read office
