@@ -8,6 +8,7 @@ use Tests\TestCase;
 
 class TagsControllerTest extends TestCase
 {
+    use RefreshDatabase;
     public function testItListsTags()
     {
         $response = $this->get('/api/tags');

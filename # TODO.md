@@ -12,6 +12,11 @@
     [] List offices
     [] Read office
     [] Create office
+    ----
+[] Filter the offices returned
+[] Paginate the list offices enpoint
+[] Show office enpoint
+[] Create office endpint
 
 
 **Laravel casts immutable_date
