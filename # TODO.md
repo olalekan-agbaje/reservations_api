@@ -10,13 +10,22 @@
     [x] Tests
 [] Offices
     [] List offices
-    [] Read office
+        [x] Show only approved and visible records
+        [x] Filter by hosts
+        [x] Filter by users
+        [x] Include tags, images and user
+        [x] Show count of previous reservations
+        [x] Paginate
+        [x] Sort by distance if lng/lat proficed. Otherwise, sort by oldest first.
+    [] Show office
+        [x] Show count of previous reservations
+        [x] Include tags, images and user
     [] Create office
-    ----
-[] Filter the offices returned
-[] Paginate the list offices enpoint
-[] Show office enpoint
-[] Create office endpint
+        [] Host must be authenticated and email verified
+        [] Cannot fill 'approval_status'
+        [] Attach photos to offices endpoint
+        
 
 
-**Laravel casts immutable_date
+local scopes
+factorystates
