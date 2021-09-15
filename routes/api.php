@@ -18,3 +18,4 @@ use App\Http\Controllers\OfficeController;
 
 Route::get('/tags', TagController::class);
 Route::get('/offices', [OfficeController::class, 'index'])->name('offices.index');
+Route::get('/offices/{office}', [OfficeController::class, 'show'])->name('office.show');
