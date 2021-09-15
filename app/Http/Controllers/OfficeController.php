@@ -2,18 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\OfficeResource;
 use App\Models\Office;
 use Illuminate\Http\Request;
+use App\Http\Resources\OfficeResource;
+use App\Models\Reservation;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OfficeController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
+        $hostId = request('host_id');
+        $userId = request('user_id');
+        $latLng = request('lat') && request('lng');
+
         $offices = Office::query()
-            ->latest('id')
-            ->get();
+            ->where('approval_status', Office::APPROVAL_APPROVED)
+            ->where('hidden', false)
+            ->when($hostId, fn ($builder) => $builder->whereUserId($hostId))
+            ->when($userId, fn ($builder) => $builder->whereRelation('reservations', 'user_id', '=', $userId))
+            ->when(
+                $latLng,
+                fn ($builder) => $builder->nearestTo(request('lat'), request('lng')),
+                fn ($builder) => $builder->orderBy('id', 'ASC'),
+            )
+            ->with(['images','tags','user'])
+            ->withCount(['reservations' => fn ($builder) => $builder->where('status', Reservation::STATUS_ACTIVE)])
+            ->paginate(20);
 
         return OfficeResource::collection($offices);
     }
@@ -47,7 +63,10 @@ class OfficeController extends Controller
      */
     public function show(office $office)
     {
-        //
+        $office->loadCount(['reservations' => fn ($builder) => $builder->where('status', Reservation::STATUS_ACTIVE)])
+        ->load(['images','tags','user']);
+
+        return OfficeResource::make($office);
     }
 
     /**

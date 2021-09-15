@@ -5,11 +5,13 @@ namespace App\Models;
 use App\Models\Image;
 use App\Models\Reservation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Office extends Model
 {
@@ -42,5 +44,21 @@ class Office extends Model
     public function images(): MorphMany
     {
         return $this->morphMany(Image::class, 'resource');
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'office_tags');
+    }
+
+    public function scopeNearestTo(Builder $builder, $lat, $lng)
+    {
+        return $builder->select()->selectRaw(
+            'SQRT(
+            POW(69.1 * (lat - ?), 2) +
+            POW(69.1 * (? - lng) * COS(lat / 57.3), 2)
+            ) AS distance',
+            [$lat, $lng]
+        )->orderBy('distance');
     }
 }
