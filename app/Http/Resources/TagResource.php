@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Support\Arr;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TagResource extends JsonResource
@@ -14,6 +15,11 @@ class TagResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [$this->merge(Arr::except(parent::toArray($request), [
+            'pivot',
+            'created_at',
+            'updated_at',
+            'deleted_at'
+        ]))];
     }
 }
