@@ -13,15 +13,15 @@ class OfficeController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        $hostId = request('host_id');
         $userId = request('user_id');
+        $visitorId = request('visitor_id');
         $latLng = request('lat') && request('lng');
 
         $offices = Office::query()
             ->where('approval_status', Office::APPROVAL_APPROVED)
             ->where('hidden', false)
-            ->when($hostId, fn ($builder) => $builder->whereUserId($hostId))
-            ->when($userId, fn ($builder) => $builder->whereRelation('reservations', 'user_id', '=', $userId))
+            ->when($userId, fn ($builder) => $builder->whereUserId($userId))
+            ->when($visitorId, fn ($builder) => $builder->whereRelation('reservations', 'user_id', '=', $visitorId))
             ->when(
                 $latLng,
                 fn ($builder) => $builder->nearestTo(request('lat'), request('lng')),
