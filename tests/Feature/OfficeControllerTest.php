@@ -180,7 +180,7 @@ class OfficeControllerTest extends TestCase
         Notification::fake();
 
 
-        $adminUser = User::factory()->create(['name' => 'AdminUser']);
+        $adminUser = User::factory()->create(['is_admin' => true]);
         $user = User::factory()->createQuietly();
         $tag = Tag::factory()->create();
         $tag2 = Tag::factory()->create();
@@ -267,7 +267,7 @@ class OfficeControllerTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $adminUser = User::factory()->create(['name' => 'AdminUser']);
+        $adminUser = User::factory()->create(['is_admin' => true]);
         $user = User::factory()->create();
         $office = Office::factory()->for($user)->create();
 

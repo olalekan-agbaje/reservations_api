@@ -71,7 +71,7 @@ class OfficeController extends Controller
             return $office;
         });
 
-        Notification::send(User::firstWhere('name', 'AdminUser'), new OfficePendingApprovalNotification($office));
+        Notification::send(User::isAdmin()->get(), new OfficePendingApprovalNotification($office));
 
         return OfficeResource::make($office->load(['images', 'tags', 'user']));
     }
@@ -142,7 +142,7 @@ class OfficeController extends Controller
         });
 
         if ($notifyAdmin) {
-            Notification::send(User::firstWhere('name', 'AdminUser'), new OfficePendingApprovalNotification($office));
+            Notification::send(User::isAdmin()->get(), new OfficePendingApprovalNotification($office));
         }
         return OfficeResource::make($office->load(['images', 'tags', 'user']));
     }
