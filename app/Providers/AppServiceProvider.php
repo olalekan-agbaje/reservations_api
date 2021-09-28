@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Models\Office;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
@@ -33,7 +34,8 @@ class AppServiceProvider extends ServiceProvider
 
         //return office resource type instead of app\models\Office relation type
         Relation::enforceMorphMap([
-            'office'=>Office::class, 
+            'office' => Office::class,
+            'user' => User::class,
         ]);
     }
 }
