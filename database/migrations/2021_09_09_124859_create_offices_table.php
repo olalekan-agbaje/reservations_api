@@ -16,6 +16,7 @@ class CreateOfficesTable extends Migration
         Schema::create('offices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->index();
+            $table->foreignId('featured_image_id')->index()->nullable();
             $table->string('title');
             $table->text('description');
             $table->decimal('lat', 11, 8);
@@ -36,7 +37,7 @@ class CreateOfficesTable extends Migration
             $table->foreignId('office_id')->index();
             $table->foreignId('tag_id')->index();
             $table->timestamps();
-            $table->unique(['office_id','tag_id']);
+            $table->unique(['office_id', 'tag_id']);
         });
     }
 
