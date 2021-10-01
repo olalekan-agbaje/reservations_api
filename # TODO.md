@@ -71,8 +71,8 @@
     
     ## List Reservtion Endpoint
     
-    [] Must be authenticated & email verified
-    [] Token (if exists) must allow reservations.show
+    [x] Must be authenticated & email verified
+    [x] Token (if exists) must allow reservations.show
     [] Can only list their own reservations or reservations on their own offices
     [] Allow filtering by office_id    
     [] Allow filtering by user_id    
