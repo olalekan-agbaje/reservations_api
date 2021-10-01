@@ -25,7 +25,9 @@ class OfficeControllerTest extends TestCase
         Office::factory(3)->create();
         $response = $this->get(route('offices.index'));
 
-        $response->assertStatus(200)->assertJsonCount(3, 'data');
+        $response->assertStatus(200)->assertJsonCount(3, 'data')->
+        assertJsonStructure(['data','links','meta'])
+        ->assertJsonStructure(['data'=>['*'=>['id','title']]]);
         $this->assertNotNull($response->json('meta'));
         $this->assertNotNull($response->json('links'));
         $this->assertNotNull($response->json('data')[0]['id']);
