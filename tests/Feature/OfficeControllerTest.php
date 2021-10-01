@@ -327,7 +327,7 @@ class OfficeControllerTest extends TestCase
 
     public function testItCanDeleteOffices()
     {
-        Storage::disk('public')->put('/image2.jpg', 'e');
+        Storage::put('/image2.jpg', 'e');
         $user = User::factory()->createQuietly();
         $office = Office::factory()->for($user)->create();
         $image2 = $office->images()->create(['path' => 'image2.jpg']);
@@ -338,7 +338,7 @@ class OfficeControllerTest extends TestCase
 
         $this->assertDeleted($image2);
 
-        Storage::disk('public')->assertMissing('/image2.jpg');
+        Storage::assertMissing('/image2.jpg');
         $this->assertSoftDeleted($office);
     }
 

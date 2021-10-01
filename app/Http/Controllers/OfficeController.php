@@ -170,7 +170,7 @@ class OfficeController extends Controller
         );
         /** Should we actually delete office images, since office are actually soft deleted */
         $office->images()->each(function ($image) {
-            Storage::disk('public')->delete($image->path);
+            Storage::delete($image->path);
             $image->delete();
         });
 

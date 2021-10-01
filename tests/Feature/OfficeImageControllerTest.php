@@ -27,12 +27,12 @@ class OfficeImageControllerTest extends TestCase
             'image' => UploadedFile::fake()->image('image.jpg')
         ])->assertCreated();
 
-        Storage::disk()->assertExists($response->json('data.path'));
+        Storage::assertExists($response->json('data.path'));
     }
 
     public function testItDeletesAnImage()
     {
-        Storage::disk('public')->put('/image2.jpg', 'e');
+        Storage::put('/image2.jpg', 'e');
 
         $user = User::factory()->create();
         $office = Office::factory()->for($user)->create();
@@ -44,7 +44,7 @@ class OfficeImageControllerTest extends TestCase
 
         $this->assertDeleted($image2);
 
-        Storage::disk('public')->assertMissing('image2.jpg');
+        Storage::assertMissing('image2.jpg');
     }
 
     public function testItDoesntDeleteAnOnlyImage()
@@ -85,7 +85,6 @@ class OfficeImageControllerTest extends TestCase
         Sanctum::actingAs($user, ['office.update']);
         $response = $this->deleteJson(route('offices.images.delete', [$office->id, $image->id]));
 
-        $response->assertUnprocessable();
-        $response->assertJsonValidationErrors(['image' => 'Cannot delete this image.']);
+        $response->assertNotFound();
     }
 }
