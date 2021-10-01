@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\OfficeImageController;
+use App\Http\Controllers\HostReservationController;
+use App\Http\Controllers\UserReservationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +37,8 @@ Route::post('/offices/{office}/images', [OfficeImageController::class, 'store'])
     ->middleware(['auth:sanctum', 'verified'])->name('offices.images.store');
 Route::delete('/offices/{office}/images/{image:id}', [OfficeImageController::class, 'destroy'])
     ->middleware(['auth:sanctum', 'verified'])->name('offices.images.delete');
+//User Reservation
+Route::get('/reservations', [UserReservationController::class, 'index'])->name('reservation.index');
+
+//User Reservation
+Route::get('/host/reservations', [HostReservationController::class, 'index'])->name('host.reservation.index');
