@@ -8,11 +8,12 @@ use App\Models\User;
 use App\Models\Image;
 use App\Models\Office;
 use App\Models\Reservation;
-use App\Notifications\OfficePendingApprovalNotification;
 use Laravel\Sanctum\Sanctum;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Notifications\OfficePendingApprovalNotification;
 
 class OfficeControllerTest extends TestCase
 {
@@ -326,14 +327,18 @@ class OfficeControllerTest extends TestCase
 
     public function testItCanDeleteOffices()
     {
-        $this->withExceptionHandling();
+        Storage::disk('public')->put('/image2.jpg', 'e');
         $user = User::factory()->createQuietly();
         $office = Office::factory()->for($user)->create();
+        $image2 = $office->images()->create(['path' => 'image2.jpg']);
 
         Sanctum::actingAs($user, ['office.delete']);
 
         $response = $this->deleteJson(route('offices.delete', $office->id))->assertOk();
 
+        $this->assertDeleted($image2);
+
+        Storage::disk('public')->assertMissing('/image2.jpg');
         $this->assertSoftDeleted($office);
     }
 

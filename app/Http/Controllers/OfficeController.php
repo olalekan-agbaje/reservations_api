@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\OfficeResource;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Validators\OfficeValidator;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
@@ -167,6 +168,11 @@ class OfficeController extends Controller
             $office->reservations()->where('status', Reservation::STATUS_ACTIVE)->count(),
             ValidationException::withMessages(['Office' => 'The office has active reservations! Cannot delete'])
         );
+        /** Should we actually delete office images, since office are actually soft deleted */
+        $office->images()->each(function ($image) {
+            Storage::disk('public')->delete($image->path);
+            $image->delete();
+        });
 
         $office->delete();
     }
