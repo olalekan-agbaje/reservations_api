@@ -8,26 +8,30 @@ use App\Models\Reservation;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\OfficeResource;
 use App\Models\Validators\OfficeValidator;
-use App\Notifications\OfficePendingApprovalNotification;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Resources\Json\JsonResource;
+use App\Notifications\OfficePendingApprovalNotification;
 
 class OfficeController extends Controller
 {
     public function index(): JsonResource
     {
         $userId = request('user_id');
+        $aUserIsLoggedIn = auth()->user();
+        $userIsLoggedInUser = $userId && $aUserIsLoggedIn && $userId == auth()->id();
         $visitorId = request('visitor_id');
         $latLng = request('lat') && request('lng');
 
         $offices = Office::query()
-            ->where('approval_status', Office::APPROVAL_APPROVED)
-            ->where('hidden', false)
+            ->when(
+                $userIsLoggedInUser,
+                fn ($builder) => $builder,
+                fn ($builder) => $builder->where('approval_status', Office::APPROVAL_APPROVED)->where('hidden', false)
+            )
             ->when($userId, fn ($builder) => $builder->whereUserId($userId))
             ->when($visitorId, fn ($builder) => $builder->whereRelation('reservations', 'user_id', '=', $visitorId))
             ->when(
