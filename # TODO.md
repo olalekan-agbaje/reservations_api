@@ -62,9 +62,9 @@
     ## Office Photos
 
     [x] Attaching photos to an office
-    [] Allow choosing a photo to become the featured photo
-    [] Deleting a photo
-        - Must have at least one photo if it is approved.
+    [x] Allow choosing a photo to become the featured photo
+    [xx] Deleting a photo
+        [xx] Must have at least one photo if it is approved.
 
 [] Reservations
     
