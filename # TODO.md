@@ -9,8 +9,6 @@
     [x] Controller
     [x] Tests    
 
-[] Identify who an admin is by adding an `is_admin` attribute to the users table.
-[] Show hidden and unapproved offices when filtering by `user_id` and the auth user matches the user so hosts can see all their listings
 
 [] Offices
     
@@ -24,6 +22,8 @@
     [x] Paginate
     [x] Sort by distance if lng/lat proficed. Otherwise, sort by oldest first.
     [x] Order by distance but don't include the distance attribute
+    [x] Identify who an admin is by adding an `is_admin` attribute to the users table.
+    [x] Show hidden and unapproved offices when filtering by `user_id` and the auth user matches the user so hosts can see all their listings
     [xx] Change the user_id filter to visitor_id and host_id to user_id
     [xx] Switch to using Custom Polymorphic Types
     [xx] Configure the resuources
@@ -61,7 +61,7 @@
     
     ## Office Photos
 
-    [] Attaching photos to an office
+    [x] Attaching photos to an office
     [] Allow choosing a photo to become the featured photo
     [] Deleting a photo
         - Must have at least one photo if it is approved.
