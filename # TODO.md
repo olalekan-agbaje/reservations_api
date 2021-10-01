@@ -58,6 +58,7 @@
     [x] Token (if exists) must allow office.delete
     [x] Can only delete their own offices
     [x] Cannot delete an office that has a reservation
+    [x] Delete office images when offic is deleted
     
     ## Office Photos
 
