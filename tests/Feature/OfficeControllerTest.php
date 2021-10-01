@@ -238,21 +238,46 @@ class OfficeControllerTest extends TestCase
         $response = $this->putJson(route('offices.update', $office->id), [
             'title' => 'New Office in location',
             'description' => 'New Description of office',
-            // 'lat' => '39.123456798',
-            // 'lng' => '-8.123454987',
-            // 'address_line1' => 'Address is a required field',
-            // 'price_per_day' => 25_123,
-            // 'monthly_discount' => 5,
             'tags' => [$tags[0]->id, $anotherTag->id],
         ])->assertJsonPath('data.title', 'New Office in location')
             ->assertJsonPath('data.description', 'New Description of office')
             ->assertJsonCount(2, 'data.tags')
             ->assertJsonPath('data.tags.0.id', $tags[0]->id)
             ->assertOk();
-        //     ->assertJsonPath('data.approval_status', Office::APPROVAL_PENDING)
-        //     ->assertJsonPath('data.user.id', $user->id)
+    }
 
-        // $this->assertDatabaseHas('offices', ['title' => 'Office in location']);
+    public function testItUpdatesTheFeaturedImageOfAnOffice()
+    {
+        $this->withExceptionHandling();
+        $user = User::factory()->createQuietly();
+        $office = Office::factory()->for($user)->create();
+
+        $image = $office->images()->create(['path' => 'image.jpg']);
+        Sanctum::actingAs($user, ['office.update']);
+
+        $response = $this->putJson(route('offices.update', $office->id), [
+            'featured_image_id' => $image->id,
+        ])
+            ->assertJsonPath('data.featured_image_id', $image->id)
+            ->assertOk()
+            ->assertJsonPath('data.user.id', $user->id);
+    }
+
+    public function testItDoesntUpdateTheFeaturedImageOfAnotherOffice()
+    {
+        $this->withExceptionHandling();
+        $user = User::factory()->createQuietly();
+        $office = Office::factory()->for($user)->create();
+        $office2 = Office::factory()->for($user)->create();
+
+        $image = $office2->images()->create(['path' => 'image.jpg']);
+        Sanctum::actingAs($user, ['office.update']);
+
+        $response = $this->putJson(route('offices.update', $office->id), [
+            'featured_image_id' => $image->id,
+        ])
+            ->assertUnprocessable()
+            ->assertInvalid("featured_image_id");
     }
 
     public function testItDoesntUpdateOfficeThatDoesntBelongToUser()
@@ -268,12 +293,6 @@ class OfficeControllerTest extends TestCase
         $response = $this->putJson(route('offices.update', $office->id), [
             'title' => 'User 2 Office in location',
             'description' => 'User 2 Description of office',
-            // 'lat' => '39.123456798',
-            // 'lng' => '-8.123454987',
-            // 'address_line1' => 'Address is a required field',
-            // 'price_per_day' => 25_123,
-            // 'monthly_discount' => 5,
-            // 'tags' => [$tag->id, $tag2->id],
         ])->assertForbidden();
     }
 
@@ -294,10 +313,6 @@ class OfficeControllerTest extends TestCase
             'description' => 'User 2 Description of office',
             'lat' => '39.123456798',
             'lng' => '-8.123454987',
-            // 'address_line1' => 'Address is a required field',
-            // 'price_per_day' => 25_123,
-            // 'monthly_discount' => 5,
-            // 'tags' => [$tag->id, $tag2->id],
         ])->assertJsonPath('data.approval_status', Office::APPROVAL_PENDING)
             ->assertOk();
 
@@ -307,7 +322,6 @@ class OfficeControllerTest extends TestCase
         ]);
 
         Notification::assertSentTo($adminUser, OfficePendingApprovalNotification::class);
-        // dd($response->json());
     }
 
     public function testItCanDeleteOffices()
