@@ -33,12 +33,26 @@ class OfficeControllerTest extends TestCase
     public function testItOnlyListsApprovedAndNonHiddenOffices()
     {
         Office::factory(5)->create();
-        Office::factory(3)->create(['hidden' => true]);
-        Office::factory(3)->create(['approval_status' => Office::APPROVAL_PENDING]);
+        Office::factory(3)->hidden()->create();
+        Office::factory(3)->pending()->create();
 
         $response = $this->get(route('offices.index'));
 
         $response->assertStatus(200)->assertJsonCount(5, 'data');
+    }
+
+    public function testItIncludesUnapprovedAndHiddenOfficesForCurrentLoggedInOfficeOwner()
+    {
+        $user = User::factory()->create();
+
+        Office::factory(5)->for($user)->create();
+        Office::factory()->hidden()->for($user)->create();
+        Office::factory()->pending()->for($user)->create();
+
+        Sanctum::actingAs($user, ['office.create']);
+        $response = $this->get(route('offices.index') . '?user_id=' . $user->id);
+
+        $response->assertOk()->assertJsonCount(7, 'data');
     }
 
     public function testItFiltersByUserId()
