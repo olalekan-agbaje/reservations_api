@@ -32,7 +32,7 @@ class OfficeImageControllerTest extends TestCase
 
     public function testItDeletesAnImage()
     {
-        // Storage::disk('public')->put('/image2.jpg', 'e');
+        Storage::disk('public')->put('/image2.jpg', 'e');
 
         $user = User::factory()->create();
         $office = Office::factory()->for($user)->create();
@@ -40,11 +40,11 @@ class OfficeImageControllerTest extends TestCase
         $image2 = $office->images()->create(['path' => 'image2.jpg']);
 
         Sanctum::actingAs($user, ['office.update']);
-        $response = $this->deleteJson(route('offices.images.delete', [$office->id, $image->id]))->assertOk(); //->assertSoftDeleted();
+        $response = $this->deleteJson(route('offices.images.delete', [$office->id, $image2->id]))->assertOk(); //->assertSoftDeleted();
 
-        $this->assertDeleted($image);
+        $this->assertDeleted($image2);
 
-        // Storage::disk('public')->assertMissing('image2.jpg');
+        Storage::disk('public')->assertMissing('image2.jpg');
     }
 
     public function testItDoesntDeleteAnOnlyImage()

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
 use App\Models\Office;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Resources\ImageResource;
-use App\Models\Image;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class OfficeImageController extends Controller
 {
@@ -39,6 +40,7 @@ class OfficeImageController extends Controller
         throw_if($image->resource_type != 'office' || $image->resource_id != $office->id, ValidationException::withMessages(['image' => 'Cannot delete this image.']));
         throw_if($office->images()->count() == 1, ValidationException::withMessages(['image' => 'Cannot delete the only image.']));
         throw_if($office->featured_image_id == $image->id, ValidationException::withMessages(['image' => 'Cannot delete the featured image.']));
+        Storage::disk('public')->delete($image->path);
         $image->delete();
     }
 }
