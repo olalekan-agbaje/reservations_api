@@ -12,12 +12,12 @@ use Laravel\Sanctum\Sanctum;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Notifications\OfficePendingApprovalNotification;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 
 class OfficeControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
 
     public function testItItListsPaginatedOffices()
     {
@@ -25,9 +25,8 @@ class OfficeControllerTest extends TestCase
         Office::factory(3)->create();
         $response = $this->get(route('offices.index'));
 
-        $response->assertStatus(200)->assertJsonCount(3, 'data')->
-        assertJsonStructure(['data','links','meta'])
-        ->assertJsonStructure(['data'=>['*'=>['id','title']]]);
+        $response->assertStatus(200)->assertJsonCount(3, 'data')->assertJsonStructure(['data', 'links', 'meta'])
+            ->assertJsonStructure(['data' => ['*' => ['id', 'title']]]);
         $this->assertNotNull($response->json('meta'));
         $this->assertNotNull($response->json('links'));
         $this->assertNotNull($response->json('data')[0]['id']);
@@ -356,9 +355,6 @@ class OfficeControllerTest extends TestCase
         $response = $this->deleteJson(route('offices.delete', $office->id))
             ->assertUnprocessable();
 
-        $this->assertDatabaseHas('offices', [
-            'id' => $office->id,
-            'deleted_at' => null
-        ]);
+        $this->assertNotSoftDeleted($office);
     }
 }

@@ -24,12 +24,19 @@ class ReservationFactory extends Factory
     public function definition()
     {
         return [
-            'user_id'=> User::factory(),
-            'office_id'=> Office::factory(),
+            'user_id' => User::factory(),
+            'office_id' => Office::factory(),
             'price' => $this->faker->numberBetween(10_000, 20_000),
-            'status'=>Reservation::STATUS_ACTIVE,
-            'start_date'=> now()->addDay(1)->format('Y-m-d'),
-            'end_date'=> now()->addDay(5)->format('Y-m-d'),
+            'status' => Reservation::STATUS_ACTIVE,
+            'start_date' => now()->addDay(1)->format('Y-m-d'),
+            'end_date' => now()->addDay(5)->format('Y-m-d'),
         ];
+    }
+
+    public function canceled(): Factory
+    {
+        return $this->state([
+            'status' => Reservation::STATUS_CANCELLED
+        ]);
     }
 }
