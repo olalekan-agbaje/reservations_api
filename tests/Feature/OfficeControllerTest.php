@@ -234,7 +234,7 @@ class OfficeControllerTest extends TestCase
         $anotherTag = Tag::factory()->create();
         $office = Office::factory()->for($user)->create();
 
-        $office->tags()->attach([$tags]);
+        $office->tags()->attach($tags);
 
         Sanctum::actingAs($user, ['office.update']);
 

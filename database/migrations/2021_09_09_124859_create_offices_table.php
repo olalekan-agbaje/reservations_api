@@ -36,8 +36,8 @@ class CreateOfficesTable extends Migration
             $table->bigIncrements('id');
             $table->foreignId('office_id')->index();
             $table->foreignId('tag_id')->index();
-            $table->timestamps();
             $table->unique(['office_id', 'tag_id']);
+            $table->timestamps();
         });
     }
 
