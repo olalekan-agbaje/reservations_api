@@ -18,9 +18,9 @@ class UserReservationController extends Controller
         validator(request()->all(), [
             'office_id' => ['integer'],
             'status' => [Rule::in([Reservation::STATUS_ACTIVE, Reservation::STATUS_CANCELLED,])],
-            'from_date' => ['date', 'required_with:to_date','before_or_equal:to_date'],
-            'to_date' => ['date', 'required_with:from_date','after_or_equal:from_date'],
-        ])->validate();//->validate());
+            'from_date' => ['date', 'required_with:to_date', 'before_or_equal:to_date'],
+            'to_date' => ['date', 'required_with:from_date', 'after_or_equal:from_date'],
+        ])->validate();
 
         $userId = auth()->id();
         $officeId = request('office_id');
