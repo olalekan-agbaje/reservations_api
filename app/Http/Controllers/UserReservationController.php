@@ -41,12 +41,7 @@ class UserReservationController extends Controller
             )
             ->when(
                 $dateSearch,
-                function ($query) use ($startDate, $endDate) {
-                    return $query->where(function ($query) use ($startDate, $endDate) {
-                        return $query->whereBetween('start_date', [$startDate, $endDate])
-                            ->orWhereBetween('end_date', [$startDate, $endDate]);
-                    });
-                }
+                fn ($query) => $query->betweenDates($startDate, $endDate)
             )
             ->with(['office.images', 'office.featuredImage', 'office.tags'])
             ->paginate(20);

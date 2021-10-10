@@ -14,10 +14,10 @@ class Reservation extends Model
     public const STATUS_CANCELLED = 2;
 
     protected $casts = [
-        'price'=> 'integer',
-        'status'=> 'integer',
-        'start_date'=> 'immutable_date',
-        'end_date'=> 'immutable_date',
+        'price' => 'integer',
+        'status' => 'integer',
+        'start_date' => 'immutable_date',
+        'end_date' => 'immutable_date',
     ];
 
     public function user(): BelongsTo
@@ -28,5 +28,20 @@ class Reservation extends Model
     public function office(): BelongsTo
     {
         return $this->belongsTo(Office::class);
+    }
+
+    public function scopeBetweenDates($query, $startDate, $endDate)
+    {
+        return $query
+            ->where(function ($query) use ($startDate, $endDate) {
+                return $query
+                    ->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate])
+                    ->orWhere(
+                        fn ($query) => $query
+                            ->where('start_date', '<', $startDate)
+                            ->where('end_date', '>', $endDate)
+                    );
+            });
     }
 }
