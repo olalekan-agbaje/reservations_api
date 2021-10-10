@@ -84,11 +84,11 @@
 
     ## Make Reservations Enpoint
     
-    [ ] Must be authenticated & email verified
-    [ ] Token (if exists) must allow `reservations.make`
-    [ ] Cannot make reservations on their own property
-    [ ] Validate no other reservation conflicts with the same time
-    [ ] Use locks to make the process atomic
+    [x] Must be authenticated & email verified
+    [x] Token (if exists) must allow reservations.make
+    [x] Cannot make reservations on their own property
+    [x] Validate no other reservation conflicts with the same time
+    [x] Use locks to make the process atomic
     [ ] Email user & host when a reservation is made
     [ ] Email user & host on reservation start day
     [ ] Generate WIFI password for new reservations (store encrypted)
