@@ -42,24 +42,33 @@ class UserReservationControllerTest extends TestCase
 
     public function testItListsReservationsByDateRange()
     {
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
 
         $user = User::factory()->create();
         $startDate = "2021-03-03";
         $endDate = "2021-04-04";
 
-        $reservation1 = Reservation::factory()->for($user)->create([
-            'start_date' => "2021-03-04",
-            'end_date' => "2021-03-15",
-        ]);
-        $reservation2 = Reservation::factory()->for($user)->create([
-            'start_date' => "2021-03-05",
-            'end_date' => "2021-04-15",
-        ]);
-        $reservation3 = Reservation::factory()->for($user)->create([
-            'start_date' => "2021-02-25",
-            'end_date' => "2021-03-29",
-        ]);
+        $reservations = Reservation::factory()->for($user)->createMany(
+            [
+                [
+                    'start_date' => "2021-03-04",
+                    'end_date' => "2021-03-15",
+                ],
+                [
+                    'start_date' => "2021-03-05",
+                    'end_date' => "2021-04-15",
+                ],
+                [
+                    'start_date' => "2021-02-25",
+                    'end_date' => "2021-03-29",
+                ],
+                [
+                    'start_date' => "2021-02-25",
+                    'end_date' => "2021-04-29",
+                ]
+            ]
+        );
+
         $reservation = Reservation::factory()->create([
             'start_date' => "2021-02-25",
             'end_date' => "2021-03-29",
@@ -77,12 +86,8 @@ class UserReservationControllerTest extends TestCase
                 'to_date' => $endDate
             ]
         ));
-        // $response->assertJsonValidationErrors(['to_date']);
-        $response->assertJsonCount(3, 'data')
-            ->assertJsonPath('data.0.id', $reservation1->id)
-            ->assertJsonPath('data.1.id', $reservation2->id)
-            ->assertJsonPath('data.2.id', $reservation3->id);
-        // $this->assertEquals([$reservation1->id,$reservation2->id,$reservation3->id,],collect($response->json('data'))->pluck('id')->toArray());
+        $response->assertJsonCount(4, 'data');
+        $this->assertEquals($reservations->pluck('id')->toArray(), collect($response->json('data'))->pluck('id')->toArray());
     }
 
     public function testItFiltersReservationByStatus()
