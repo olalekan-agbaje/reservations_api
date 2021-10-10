@@ -124,4 +124,89 @@ class UserReservationControllerTest extends TestCase
             ->assertJsonPath('data.0.office.id', $office->id)
             ->assertJsonPath('data.1.office.id', $office->id);
     }
+
+    public function testItMakesReservations()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $office = Office::factory()->create([
+            'price_per_day' => 1_000,
+            'monthly_discount' => 10
+        ]);
+
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->postJson(route('reservation.create'), [
+            'office_id' => $office->id,
+            'from_date' => now()->addDay(1),
+            'to_date' => now()->addDays(41),
+        ]);
+        $response->assertCreated();
+        $response->assertJsonPath('data.price', 36000)
+            ->assertJsonPath('data.user_id', $user->id)
+            ->assertJsonPath('data.office_id', $office->id)
+            ->assertJsonPath('data.status', Reservation::STATUS_ACTIVE);
+    }
+
+    public function testItCannotMakeReservationForNonExistingOffice()
+    {
+        // $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->postJson(route('reservation.create'), [
+            'office_id' => 25,
+            'from_date' => now()->addDay(1),
+            'to_date' => now()->addDays(41),
+        ]);
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['office_id' => 'Invalid office_id']);
+    }
+
+    public function testItCannotMakeReservationForOwnOffice()
+    {
+
+        $user = User::factory()->create();
+        $office = Office::factory()->for($user)->create();
+
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->postJson(route('reservation.create'), [
+            'office_id' => $office->id,
+            'from_date' => now()->addDay(1),
+            'to_date' => now()->addDays(41),
+        ]);
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['office_id' => 'You cannot make a reservation on your own office.']);
+    }
+
+    public function testItCannotMakeConflictingReservations()
+    {
+        // $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $startDate = now()->addDay(2)->toDateString();
+        $endDate = now()->addDay(15)->toDateString();
+        $office = Office::factory()->create();
+
+        Reservation::factory()->for($office)->create([
+            'start_date' => now()->addDay(2),
+            'end_date' => $endDate,
+        ]);
+
+        Sanctum::actingAs($user, ['*']);
+        $response = $this->postJson(route('reservation.create'), [
+            'office_id' => $office->id,
+            'from_date' => $startDate,
+            'to_date' => $endDate,
+        ]);
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['office_id' => 'Your selected reservation dates are not available.']);
+    }
 }
