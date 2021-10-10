@@ -79,6 +79,8 @@
     [x] Allow filtering by date range    
     [x] Allow filtering by status   
     [x] Paginate
+    [x] Convert reservations filters to eloquent scopes
+    [x] Include reservations that started before range and ended after range while filtering
 
     ## Make Reservations Enpoint
     
